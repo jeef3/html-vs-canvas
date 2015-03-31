@@ -5,7 +5,10 @@
   var html = document.getElementById('html');
 
   var objects = [];
-  var objectCount = 10;
+  var objectCount = 500;
+
+  document.getElementById('count').innerHTML = objectCount;
+  var frameRateEl = document.getElementById('frame-rate');
 
   var width = 400;
   var height = 400;
@@ -111,6 +114,27 @@
     stage.update();
   };
 
+  var fpss = [];
+  var averages = [];
+  var fps = function (ms) {
+    fpss.push(ms);
+
+    if (fpss.length > 10) {
+      fpss.shift();
+    }
+
+    var sum = fpss.reduce(function (a, b) { return a + b; });
+    var average = Math.round(sum / fpss.length);
+
+    averages.push(average);
+
+    if (averages.length > 100) {
+      averages.shift();
+    }
+
+    return average;
+  };
+
   var last;
   var step = function (ts) {
     if (!last) { last = ts; }
@@ -119,6 +143,8 @@
     last = ts;
 
     move(delta);
+
+    frameRateEl.innerHTML = fps((1 / delta) * 1000) + 'fps';
 
     window.requestAnimationFrame(step);
   };
