@@ -4,18 +4,47 @@
   var canvas = document.getElementById('canvas');
   var html = document.getElementById('html');
 
+  var HTML_ONLY = 1;
+  var CANVAS_ONLY = 2;
+  var BOTH = 3;
+
+  var mode = BOTH;
+  var width = 400;
+  var height = 400;
+  var objectCount = 100;
+
+  // Retina the Canvas
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+
+  html.style.width = width + 'px';
+  html.style.height = height + 'px';
+
+  if (mode === HTML_ONLY) {
+    canvas.style.display = 'none';
+  }
+
+  if (mode === CANVAS_ONLY) {
+    html.style.display = 'none';
+  }
+
+  var modeString = mode === BOTH ? 'both' :
+    (mode === HTML_ONLY ? 'html' : 'canvas');
+  document.getElementById('mode').innerHTML = modeString;
+
   var objects = [];
-  var objectCount = 500;
 
   document.getElementById('count').innerHTML = objectCount;
   var frameRateEl = document.getElementById('frame-rate');
 
-  var width = 400;
-  var height = 400;
-
   var stage = new createjs.Stage(canvas);
+  stage.scaleX = window.devicePixelRatio;
+  stage.scaleY = window.devicePixelRatio;
+
   var addToCanvas = function (o) {
-    var shape = o.canvasNode =new createjs.Shape();
+    var shape = o.canvasNode = new createjs.Shape();
     shape.x = o.pos.x;
     shape.y = o.pos.y;
 
@@ -99,8 +128,13 @@
 
   // Place objects in scene
   objects.forEach(function (o) {
-    addToCanvas(o);
-    addToHtml(o);
+    if (mode === BOTH || mode === CANVAS_ONLY) {
+      addToCanvas(o);
+    }
+
+    if (mode === BOTH || mode === HTML_ONLY) {
+      addToHtml(o);
+    }
   });
   stage.update();
 
@@ -108,10 +142,19 @@
   var move = function (delta) {
     objects.forEach(function (o) {
       nextPos(o, delta);
-      updateCanvas(o);
-      updateHtml(o);
+
+      if (mode === BOTH || mode === CANVAS_ONLY) {
+        updateCanvas(o);
+      }
+
+      if (mode === BOTH || mode === HTML_ONLY) {
+        updateHtml(o);
+      }
     });
-    stage.update();
+
+    if (mode === BOTH || mode === CANVAS_ONLY) {
+      stage.update();
+    }
   };
 
   var fpss = [];
