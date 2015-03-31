@@ -9,6 +9,7 @@
   var BOTH = 3;
 
   var mode = BOTH;
+  var MOVING = true;
   var width = 400;
   var height = 400;
   var objectCount = 100;
@@ -158,7 +159,6 @@
   };
 
   var fpss = [];
-  var averages = [];
   var fps = function (ms) {
     fpss.push(ms);
 
@@ -168,12 +168,6 @@
 
     var sum = fpss.reduce(function (a, b) { return a + b; });
     var average = Math.round(sum / fpss.length);
-
-    averages.push(average);
-
-    if (averages.length > 100) {
-      averages.shift();
-    }
 
     return average;
   };
@@ -185,7 +179,9 @@
 
     last = ts;
 
-    move(delta);
+    if (MOVING) {
+      move(delta);
+    }
 
     frameRateEl.innerHTML = fps((1 / delta) * 1000) + 'fps';
 
