@@ -12,14 +12,20 @@
 
   var stage = new createjs.Stage(canvas);
   var addToCanvas = function (o) {
-    var shape = new createjs.Shape();
+    var shape = o.canvasNode =new createjs.Shape();
+    shape.x = o.pos.x;
+    shape.y = o.pos.y;
+
     shape.graphics
       .beginFill('#cc5555')
-      .drawCircle(o.pos.x, o.pos.y, (o.size) / 2);
-
-    o.canvasNode = shape;
+      .drawCircle(0, 0, (o.size) / 2);
 
     stage.addChild(shape);
+  };
+
+  var updateCanvas = function (o) {
+    o.canvasNode.x = o.pos.x;
+    o.canvasNode.y = o.pos.y;
   };
 
   var addToHtml = function (o) {
@@ -37,6 +43,11 @@
     html.appendChild(el);
   };
 
+  var updateHtml = function (o) {
+    o.htmlNode.style.left = o.pos.x + 'px';
+    o.htmlNode.style.top = o.pos.y + 'px';
+  };
+
   // Build objects
   var i;
   for (i = 0; i < objectCount; i++) {
@@ -47,31 +58,37 @@
         y: Math.round(Math.random() * height)
       },
       direction: Math.round(Math.random() * 360),
-      speed: 100,
+      speed: Math.random() / 10,
       size: Math.round(Math.random() * 30) + 10
     });
   }
 
-  var move = function (obj) {
+  var nextPos = function (obj, delta) {
+    var distance = obj.speed * delta;
+    var angle = obj.direction * (Math.PI / 180);
     var newPos = {
-      x: Math.sin(obj.direction) * obj.speed,
-      y: Math.cos(obj.direction) * obj.speed
+      x: obj.pos.x + (Math.sin(angle) * distance),
+      y: obj.pos.y + (Math.cos(angle) * distance)
     };
 
     if (newPos.x < 0) {
       newPos.x = Math.abs(newPos.x);
+      obj.direction = obj.direction - ((obj.direction - 180) * 2);
     }
 
     if (newPos.x > width) {
       newPos.x = width - (newPos.x - width);
+      obj.direction = obj.direction - ((obj.direction - 180) * 2);
     }
 
     if (newPos.y < 0) {
       newPos.y = Math.abs(newPos.y);
+      obj.direction = 180 - (obj.direction);
     }
 
     if (newPos.y > height) {
       newPos.y = height - (newPos.y - height);
+      obj.direction = 180 - (obj.direction);
     }
 
     obj.pos = newPos;
@@ -85,4 +102,26 @@
   stage.update();
 
   // Start animation
+  var move = function (delta) {
+    objects.forEach(function (o) {
+      nextPos(o, delta);
+      updateCanvas(o);
+      updateHtml(o);
+    });
+    stage.update();
+  };
+
+  var last;
+  var step = function (ts) {
+    if (!last) { last = ts; }
+    var delta = ts - last;
+
+    last = ts;
+
+    move(delta);
+
+    window.requestAnimationFrame(step);
+  };
+
+  window.requestAnimationFrame(step);
 })();
