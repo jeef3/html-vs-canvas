@@ -5,13 +5,19 @@
     <title>spring graph</title>
     <meta name="description" content="">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+
+    <style>
+      .test-container {
+        position: relative;
+        overflow: hidden;
+        float: left;
+        margin-right: 10px;
+
+        background: #fff;
+      }
+    </style>
   </head>
   <body style="background: #eee">
-    <canvas id="canvas"
-        style="background: #fff;"></canvas>
-
-    <div id="html" style="float: left; background: #fff; margin-right: 10px;"></div>
-
     <div style="clear: both; padding-top: 1em;">
       <p>Mode: <span id="mode"></span></p>
       <p>Object count: <span id="count"></span></p>
@@ -19,6 +25,6 @@
     </div>
 
     <script src="https://code.createjs.com/easeljs-0.8.0.min.js"></script>
-    <script src="main.js"></script>
+    <script src="bundle.js"></script>
   </body>
 </html>
