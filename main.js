@@ -2,6 +2,7 @@
 
 import HtmlTest from './lib/html';
 import CanvasTest from './lib/canvas';
+import SvgTest from './lib/svg';
 
 var body = document.getElementsByTagName('body')[0];
 var size = {
@@ -10,14 +11,13 @@ var size = {
 };
 
 var tests = [
-  new HtmlTest(body, size),
-  new CanvasTest(body, size)
+  new SvgTest(body, size),
+  // new HtmlTest(body, size),
+  // new CanvasTest(body, size)
 ];
 
 var MOVING = true;
-var width = 400;
-var height = 400;
-var objectCount = 100;
+var objectCount = 10;
 
 document.getElementById('mode').innerHTML = 'TODO';
 
@@ -32,8 +32,8 @@ for (i = 0; i < objectCount; i++) {
   objects.push({
     name: 'o-' + i,
     pos: {
-      x: Math.round(Math.random() * width),
-      y: Math.round(Math.random() * height)
+      x: Math.round(Math.random() * size.width),
+      y: Math.round(Math.random() * size.height)
     },
     direction: Math.round(Math.random() * 360),
     speed: Math.random() / 10,
@@ -54,8 +54,8 @@ var nextPos = function (obj, delta) {
     obj.direction = obj.direction - ((obj.direction - 180) * 2);
   }
 
-  if (newPos.x > width) {
-    newPos.x = width - (newPos.x - width);
+  if (newPos.x > size.width) {
+    newPos.x = size.width - (newPos.x - size.width);
     obj.direction = obj.direction - ((obj.direction - 180) * 2);
   }
 
@@ -64,8 +64,8 @@ var nextPos = function (obj, delta) {
     obj.direction = 180 - (obj.direction);
   }
 
-  if (newPos.y > height) {
-    newPos.y = height - (newPos.y - height);
+  if (newPos.y > size.height) {
+    newPos.y = size.height - (newPos.y - size.height);
     obj.direction = 180 - (obj.direction);
   }
 
